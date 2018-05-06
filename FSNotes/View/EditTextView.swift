@@ -524,7 +524,7 @@ class EditTextView: NSTextView {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        registerForDraggedTypes([NSPasteboard.PasteboardType(kUTTypeFileURL as String)])
+        registerForDraggedTypes([.FileURL])
     }
 
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {

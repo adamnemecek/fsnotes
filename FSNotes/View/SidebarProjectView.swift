@@ -11,6 +11,7 @@ import Carbon.HIToolbox
 
 extension NSPasteboard.PasteboardType {
     static let NotesTable = NSPasteboard.PasteboardType(rawValue: "notesTable")
+    static let FileURL = NSPasteboard.PasteboardType(kUTTypeFileURL as String)
 }
 
 class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDataSource {
@@ -254,26 +255,25 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
     }
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
-        if let view = notification.object as? NSOutlineView {
-            guard let sidebar = sidebarItems, let vd = viewDelegate else { return }
 
-            vd.editArea.clear()
+        guard let view = notification.object as? NSOutlineView,
+            let sidebar = sidebarItems, let vd = viewDelegate else { return }
 
-            let i = view.selectedRow
-            if sidebar.indices.contains(i) {
-                UserDefaultsManagement.lastProject = i
-                vd.prevQuery = nil
-                vd.updateTable() {
-                    if self.isFirstLaunch {
-                        if let url = UserDefaultsManagement.lastSelectedURL, let lastNote = vd.storage.getBy(url: url), let i = vd.notesTableView.getIndex(lastNote) {
-                            vd.notesTableView.selectRow(i)
-                            vd.notesTableView.scrollRowToVisible(i)
-                        } else if vd.notesTableView.noteList.count > 0 {
-                            vd.focusTable()
-                        }
-                        self.isFirstLaunch = false
-                    }
+        vd.editArea.clear()
+
+        let i = view.selectedRow
+        guard sidebar.indices.contains(i) else { return }
+        UserDefaultsManagement.lastProject = i
+        vd.prevQuery = nil
+        vd.updateTable() {
+            if self.isFirstLaunch {
+                if let url = UserDefaultsManagement.lastSelectedURL, let lastNote = vd.storage.getBy(url: url), let i = vd.notesTableView.getIndex(lastNote) {
+                    vd.notesTableView.selectRow(i)
+                    vd.notesTableView.scrollRowToVisible(i)
+                } else if vd.notesTableView.noteList.count > 0 {
+                    vd.focusTable()
                 }
+                self.isFirstLaunch = false
             }
         }
     }
@@ -412,9 +412,8 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
         alert.addButton(withTitle: "Add")
         alert.addButton(withTitle: "Cancel")
         alert.beginSheetModal(for: window) { (returnCode: NSApplication.ModalResponse) -> Void in
-            if returnCode == .alertFirstButtonReturn {
-                self.addChild(field: field, project: project)
-            }
+            guard returnCode == .alertFirstButtonReturn else { return }
+            self.addChild(field: field, project: project)
         }
 
         field.becomeFirstResponder()
@@ -455,29 +454,22 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
         openPanel.canCreateDirectories = true
         openPanel.canChooseFiles = false
         openPanel.begin { (result) -> Void in
-            if result.rawValue == NSFileHandlingPanelOKButton {
-                guard let url = openPanel.url else {
-                    return
-                }
 
-                guard !self.storage.projectExist(url: url) else {
-                    return
-                }
+            guard result.rawValue == NSFileHandlingPanelOKButton,
+                let url = openPanel.url,
+                !self.storage.projectExist(url: url) else { return }
 
-                let bookmark = SandboxBookmark.sharedInstance()
-                _ = bookmark.load()
-                bookmark.store(url: url)
-                bookmark.save()
+            let bookmark = SandboxBookmark.sharedInstance()
+            _ = bookmark.load()
+            bookmark.store(url: url)
+            bookmark.save()
 
-                let newProject = Project(url: url, isRoot: true)
-                self.storage.add(project: newProject)
-                self.storage.loadLabel(newProject)
-                self.reloadSidebar()
-            }
+            let newProject = Project(url: url, isRoot: true)
+            self.storage.add(project: newProject)
+            self.storage.loadLabel(newProject)
+            self.reloadSidebar()
         }
     }
-
-
 
     private func getViewController() -> ViewController {
         let vc = NSApp.windows.first?.contentViewController as? ViewController

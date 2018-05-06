@@ -73,7 +73,7 @@ public class Note: NSObject {
             return false
         }
 
-        if (modifiedAt != prevModifiedAt) {
+        if modifiedAt != prevModifiedAt {
             if let attributedString = getContent() {
                 content = NSMutableAttributedString(attributedString: attributedString)
             }
@@ -96,7 +96,7 @@ public class Note: NSObject {
     func getFileModifiedDate() -> Date? {
         do {
             let attr = try FileManager.default.attributesOfItem(atPath: url.path)
-            return attr[FileAttributeKey.modificationDate] as? Date
+            return attr[.modificationDate] as? Date
         } catch {
             NSLog("Note modification date load error: \(error.localizedDescription)")
             return nil
@@ -179,10 +179,7 @@ public class Note: NSObject {
         }
 
         preview = preview.replacingOccurrences(of: "\n", with: " ")
-        if (
-            UserDefaultsManagement.horizontalOrientation
-                && content.hasPrefix(" – ") == false
-            ) {
+        if UserDefaultsManagement.horizontalOrientation && !content.hasPrefix(" – ") {
             preview = " – " + preview
         }
 
@@ -227,7 +224,7 @@ public class Note: NSObject {
         do {
             let fileAttribute: [FileAttributeKey : Any] = try FileManager.default.attributesOfItem(atPath: url.path)
 
-            modifiedLocalAt = fileAttribute[FileAttributeKey.modificationDate] as? Date
+            modifiedLocalAt = fileAttribute[.modificationDate] as? Date
         } catch {
             print(error.localizedDescription)
         }
@@ -358,11 +355,10 @@ public class Note: NSObject {
     }
 
     func parseURL() {
-        if (url.pathComponents.count > 0) {
-            name = url.pathComponents.last!
-            type = .withExt(rawValue: url.pathExtension)
-            title = url.deletingPathExtension().pathComponents.last!.replacingOccurrences(of: ":", with: "/")
-        }
+        guard let name = url.pathComponents.last else { return }
+        self.name = name
+        type = .withExt(rawValue: url.pathExtension)
+        title = url.deletingPathExtension().pathComponents.last!.replacingOccurrences(of: ":", with: "/")
     }
 
     func save(cloudSync: Bool = true) {
@@ -376,7 +372,7 @@ public class Note: NSObject {
                 return
             }
 
-            try fileWrapper.write(to: url, options: FileWrapper.WritingOptions.atomic, originalContentsURL: nil)
+            try fileWrapper.write(to: url, options: .atomic, originalContentsURL: nil)
 
             try FileManager.default.setAttributes(attributes, ofItemAtPath: url.path)
         } catch {
@@ -465,11 +461,7 @@ public class Note: NSObject {
     }
 
     func isTrash() -> Bool {
-        guard let p = project else {
-            return false
-        }
-
-        return p.isTrash
+        return project?.isTrash ?? false
     }
 
     public func getCommaSeparatedTags() -> String {

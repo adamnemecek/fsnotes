@@ -9,9 +9,7 @@
 import UIKit
 import NightNight
 
-class NotesTableView: UITableView,
-    UITableViewDelegate,
-    UITableViewDataSource {
+class NotesTableView: UITableView, UITableViewDelegate, UITableViewDataSource {
 
     var notes = [Note]()
     var storage = Storage.sharedInstance()
@@ -100,8 +98,8 @@ class NotesTableView: UITableView,
 
                 let note = self.notes[indexPath.row]
                 guard let project = note.project, !project.fileExist(fileName: name, ext: note.url.pathExtension) else {
-                    let alert = UIAlertController(title: "Oops 👮‍♂️", message: "Note with this name already exist", preferredStyle: UIAlertControllerStyle.alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    let alert = UIAlertController(title: "Oops 👮‍♂️", message: "Note with this name already exist", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                     self.viewDelegate?.present(alert, animated: true, completion: nil)
                     return
                 }
@@ -121,7 +119,7 @@ class NotesTableView: UITableView,
             self.viewDelegate?.present(alertController, animated: true, completion: nil)
 
         })
-        rename.backgroundColor = UIColor.gray
+        rename.backgroundColor = .gray
 
         let note = self.notes[indexPath.row]
         let pin = UITableViewRowAction(style: .default, title: note.isPinned ? "UnPin" : "Pin", handler: { (action , indexPath) -> Void in
@@ -158,31 +156,29 @@ class NotesTableView: UITableView,
 
     @objc func handleLongPress(longPressGesture:UILongPressGestureRecognizer) {
         let p = longPressGesture.location(in: self)
-        let indexPath = self.indexPathForRow(at: p)
-        if indexPath == nil {
+        guard let indexPath = self.indexPathForRow(at: p) else {
             print("Long press on table view, not row.")
-        } else if (longPressGesture.state == .began) {
-            let alert = UIAlertController(title: "Are you sure you want to remove note?", message: "This action cannot be undone.", preferredStyle: .alert)
+            return
+        }
+        guard longPressGesture.state == .began else { return }
+        let alert = UIAlertController(title: "Are you sure you want to remove note?", message: "This action cannot be undone.", preferredStyle: .alert)
 
-            let remove = UIAlertAction(title: "Remove", style: .destructive) { (alert: UIAlertAction!) -> Void in
-                guard let row = indexPath?.row else {
-                    return
-                }
+        let remove = UIAlertAction(title: "Remove", style: .destructive) { (alert: UIAlertAction!) -> Void in
+            guard let row = indexPath?.row else { return }
 
-                let note = self.notes[row]
-                self.storage.removeNotes(notes: [note]) {_ in
-                    DispatchQueue.main.async {
-                        self.removeByNotes(notes: [note])
-                    }
+            let note = self.notes[row]
+            self.storage.removeNotes(notes: [note]) {_ in
+                DispatchQueue.main.async {
+                    self.removeByNotes(notes: [note])
                 }
             }
-            let cancel = UIAlertAction(title: "Cancel", style: .default)
-
-            alert.addAction(cancel)
-            alert.addAction(remove)
-
-            self.viewDelegate?.present(alert, animated: true, completion:nil)
         }
+        let cancel = UIAlertAction(title: "Cancel", style: .default)
+
+        alert.addAction(cancel)
+        alert.addAction(remove)
+
+        self.viewDelegate?.present(alert, animated: true, completion:nil)
     }
 
     var sidebarWidth: CGFloat = 0

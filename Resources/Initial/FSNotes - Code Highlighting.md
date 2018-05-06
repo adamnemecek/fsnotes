@@ -24,7 +24,7 @@
 ### Swift
 
 ```swift
-public static func getHighlighter() -> Highlightr? {
+public static var highlighter: Highlightr? {
     if let instance = self.hl {
         return instance
     }

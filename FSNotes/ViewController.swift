@@ -1013,16 +1013,15 @@ class ViewController: NSViewController,
     }
 
     func makeNoteShortcut() {
-        let clipboard = NSPasteboard.general.string(forType: NSPasteboard.PasteboardType.string)
-        if (clipboard != nil) {
-            createNote(content: clipboard!)
+        guard let clipboard = NSPasteboard.general.string(forType: .string) else { return }
 
-            let notification = NSUserNotification()
-            notification.title = "FSNotes"
-            notification.informativeText = "Clipboard successfully saved"
-            notification.soundName = NSUserNotificationDefaultSoundName
-            NSUserNotificationCenter.default.deliver(notification)
-        }
+        createNote(content: clipboard)
+
+        let notification = NSUserNotification()
+        notification.title = "FSNotes"
+        notification.informativeText = "Clipboard successfully saved"
+        notification.soundName = NSUserNotificationDefaultSoundName
+        NSUserNotificationCenter.default.deliver(notification)
     }
 
     func searchShortcut() {

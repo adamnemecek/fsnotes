@@ -324,9 +324,9 @@ class Storage {
                     url in (
                         url,
                         (try? url.resourceValues(forKeys: [.contentModificationDateKey])
-                            )?.contentModificationDate ?? Date.distantPast,
+                            )?.contentModificationDate ?? .distantPast,
                         (try? url.resourceValues(forKeys: [.creationDateKey])
-                            )?.creationDate ?? Date.distantPast
+                            )?.creationDate ?? .distantPast
                     )
                 }
         } catch {
@@ -518,7 +518,7 @@ class Storage {
     }
 
     func getSubFolders(url: URL) -> [NSURL]? {
-        guard let fileEnumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions()) else { return nil }
+        guard let fileEnumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: nil, options: []) else { return nil }
 
         var subdirs = [NSURL]()
 
@@ -527,7 +527,7 @@ class Storage {
             i = i + 1
             do {
                 var resourceValue: AnyObject?
-                try url.getResourceValue(&resourceValue, forKey: URLResourceKey.isDirectoryKey)
+                try url.getResourceValue(&resourceValue, forKey: .isDirectoryKey)
                 if let isDirectory = resourceValue as? Bool, isDirectory == true {
                     subdirs.append(url)
                 }

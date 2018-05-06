@@ -30,12 +30,12 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
         }
 
         // Tab
-        if (event.keyCode == 48 && !event.modifierFlags.contains(.control)) {
+        if event.keyCode == 48 && !event.modifierFlags.contains(.control) {
             vc.focusEditArea()
         }
 
         // Left arrow
-        if (event.keyCode == 123) {
+        if event.keyCode == 123 {
             if let fr = self.window?.firstResponder, fr.isKind(of: NSTextView.self) {
                 super.keyUp(with: event)
                 return
@@ -66,7 +66,7 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
     func tableViewSelectionDidChange(_ notification: Notification) {
         let viewController = self.window?.contentViewController as! ViewController
 
-        if (noteList.indices.contains(selectedRow)) {
+        if noteList.indices.contains(selectedRow) {
             viewController.editArea.fill(note: noteList[selectedRow], highlight: true)
 
             if UserDefaultsManagement.focusInEditorOnNoteSelect && !UserDataService.instance.searchTrigger {
@@ -118,7 +118,7 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
         var notes = [Note]()
 
         for row in selectedRowIndexes {
-            if (noteList.indices.contains(row)) {
+            if noteList.indices.contains(row) {
                 notes.append(noteList[row])
             }
         }

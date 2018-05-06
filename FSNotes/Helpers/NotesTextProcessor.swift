@@ -92,11 +92,7 @@ public class NotesTextProcessor {
     }
 
     public static func isCodeBlockParagraph(_ paragraph: String) -> Bool {
-        if (paragraph.starts(with: "\t") || paragraph.starts(with: "    ")) {
-            return true
-        }
-
-        return false
+        return paragraph.starts(with: "\t") || paragraph.starts(with: "    ")
     }
 
     public static func getFencedCodeBlockRange(paragraphRange: NSRange, string: NSString) -> NSRange? {
@@ -111,9 +107,7 @@ public class NotesTextProcessor {
             options: [],
             range: NSRange(0..<string.length),
             using: { (result, matchingFlags, stop) -> Void in
-                guard let r = result else {
-                    return
-                }
+                guard let r = result else { return }
 
                 if r.range.upperBound >= paragraphRange.location && r.range.lowerBound <= paragraphRange.location {
                     foundRange = r.range
@@ -181,7 +175,7 @@ public class NotesTextProcessor {
 
     public static var hl: Highlightr? = nil
 
-    public static func getHighlighter() -> Highlightr? {
+    public static var highlighter: Highlightr? {
         if let instance = self.hl {
             return instance
         }
@@ -274,21 +268,11 @@ public class NotesTextProcessor {
     }
 
     public static func highlight(_ code: String, language: String? = nil) -> NSAttributedString? {
-        if let highlighter = NotesTextProcessor.getHighlighter() {
-            if let result = highlighter.highlight(code, as: language) {
-                return result
-            }
-        }
-        return nil
+        return NotesTextProcessor.highlighter.flatMap { $0.highlight(code, as: language) }
     }
 
     public static func updateStorage(range: NSRange, code: NSAttributedString, storage: NSTextStorage?, string: NSString, note: Note) {
-        let content: NSAttributedString
-        if let storageUnwrapped = storage {
-            content = storageUnwrapped
-        } else {
-            content = note.content
-        }
+        let content = storage ?? note.content
 
         if ((range.location + range.length) > content.length) {
             return
@@ -339,7 +323,7 @@ public class NotesTextProcessor {
 
         if isActiveStorage {
             storage?.endEditing()
-            storage?.edited(NSTextStorageEditActions.editedAttributes, range: range, changeInLength: 0)
+            storage?.edited(.editedAttributes, range: range, changeInLength: 0)
             storage?.addAttributes([
                 .backgroundColor: NotesTextProcessor.codeBackground
                 ], range: range)
@@ -357,9 +341,9 @@ public class NotesTextProcessor {
         if async {
             DispatchQueue.global().async {
                 if let code = self.highlight(codeRange, language: preDefinedLanguage) {
-                    DispatchQueue.main.async(execute: {
+                    DispatchQueue.main.async {
                         NotesTextProcessor.updateStorage(range: range, code: code, storage: storage, string: string, note: note)
-                    })
+                    }
                 }
             }
 
@@ -389,7 +373,7 @@ public class NotesTextProcessor {
                     let range = start..<end
 
                     if self.languages == nil {
-                        self.languages = self.getHighlighter()?.supportedLanguages()
+                        self.languages = self.highlighter?.supportedLanguages()
                     }
 
                     if let lang = self.languages, lang.contains(String(code[range])) {
@@ -1251,7 +1235,7 @@ public class NotesTextProcessor {
         storage.removeAttribute(.link, range: range)
 
         let pattern = "(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})"
-        let regex = try! NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+        let regex = try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
 
         regex.enumerateMatches(
             in: (storage.string),
@@ -1333,7 +1317,7 @@ public class NotesTextProcessor {
         }
 
         let searchTerm = NSRegularExpression.escapedPattern(for: search)
-        let attributedString: NSMutableAttributedString = NSMutableAttributedString(attributedString: storage)
+        let attributedString = NSMutableAttributedString(attributedString: storage)
         let pattern = "(\(searchTerm))"
         let range: NSRange = NSMakeRange(0, storage.string.count)
 

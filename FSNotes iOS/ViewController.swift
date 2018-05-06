@@ -199,10 +199,10 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
 
                 var isDownloaded:AnyObject? = nil
                 do {
-                    try (url as NSURL).getResourceValue(&isDownloaded, forKey: URLResourceKey.ubiquitousItemDownloadingStatusKey)
+                    try (url as NSURL).getResourceValue(&isDownloaded, forKey: .ubiquitousItemDownloadingStatusKey)
                 } catch _ {}
 
-                if isDownloaded as? URLUbiquitousItemDownloadingStatus == URLUbiquitousItemDownloadingStatus.current {
+                if isDownloaded as? URLUbiquitousItemDownloadingStatus == .current {
                     added = added + 1
                 }
 
@@ -408,7 +408,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
     func initNewButton() {
         let button = UIButton(frame: CGRect(origin: CGPoint(x: self.view.frame.width - 80, y: self.view.frame.height - 80), size: CGSize(width: 48, height: 48)))
         let image = UIImage(named: "plus.png")
-        button.setImage(image, for: UIControlState.normal)
+        button.setImage(image, for: .normal)
         button.tintColor = UIColor(red: 76/255, green: 217/255, blue: 100/255, alpha: 1)
         self.view.addSubview(button)
         button.addTarget(self, action: #selector(self.makeNew), for: .touchDown)
@@ -416,9 +416,9 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
 
     func initSettingsButton() {
         let settingsIcon = UIImage(named: "settings.png")
-        let tintedSettings = settingsIcon?.withRenderingMode(UIImageRenderingMode.alwaysTemplate)
-        settingsButton.setImage(tintedSettings, for: UIControlState.normal)
-        settingsButton.tintColor = UIColor.gray
+        let tintedSettings = settingsIcon?.withRenderingMode(.alwaysTemplate)
+        settingsButton.setImage(tintedSettings, for: .normal)
+        settingsButton.tintColor = .gray
         settingsButton.addTarget(self, action: #selector(self.openSettings), for: .touchDown)
     }
 
