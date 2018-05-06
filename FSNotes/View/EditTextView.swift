@@ -317,20 +317,20 @@ class EditTextView: NSTextView {
             return UserDefaultsManagement.noteFont
         }
 
-        var mask = 0
+        var mask = NSFontTraitMask(rawValue: 0)
         if font.isBold {
             if font.isItalic {
-                mask = NSFontItalicTrait
+                mask = .italicFontMask
             }
         } else {
             if font.isItalic {
-                mask = NSFontBoldTrait|NSFontItalicTrait
+                mask = [.italicFontMask, .boldFontMask]
             } else {
-                mask = NSFontBoldTrait
+                mask = .italicFontMask
             }
         }
 
-        return NSFontManager().font(withFamily: family, traits: NSFontTraitMask(rawValue: NSFontTraitMask.RawValue(mask)), weight: 5, size: CGFloat(UserDefaultsManagement.fontSize))!
+        return NSFontManager().font(withFamily: family, traits: mask, weight: 5, size: CGFloat(UserDefaultsManagement.fontSize))!
     }
 
     func toggleItalicFont(font: NSFont) -> NSFont? {
@@ -338,25 +338,21 @@ class EditTextView: NSTextView {
             return UserDefaultsManagement.noteFont
         }
 
-        var mask = 0
-        if font.isItalic {
-            if font.isBold {
-                mask = NSFontBoldTrait
+        var mask = NSFontTraitMask(rawValue: 0)
+        if font.isBold {
+            if font.isItalic {
+                mask = .italicFontMask
             }
         } else {
-            if font.isBold {
-                mask = NSFontBoldTrait|NSFontItalicTrait
+            if font.isItalic {
+                mask = [.italicFontMask, .boldFontMask]
             } else {
-                mask = NSFontItalicTrait
+                mask = .italicFontMask
             }
         }
 
         let size = CGFloat(UserDefaultsManagement.fontSize)
-        guard let newFont = NSFontManager().font(withFamily: family, traits: NSFontTraitMask(rawValue: NSFontTraitMask.RawValue(mask)), weight: 5, size: size) else {
-            return nil
-        }
-
-        return newFont
+        return NSFontManager().font(withFamily: family, traits: mask, weight: 5, size: size)
     }
 
     override func paste(_ sender: Any?) {
@@ -529,20 +525,15 @@ class EditTextView: NSTextView {
 
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         let board = sender.draggingPasteboard()
-        var data: Data
 
-        guard let note = getSelectedNote(), let storage = textStorage, let urls = board.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
-            urls.count > 0 else {
+        guard let note = getSelectedNote(),
+            let storage = textStorage,
+            let urls = board.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
+            let url = urls.first else {
             return false
         }
 
-        let url = urls[0]
-
-        do {
-            data = try Data(contentsOf: url)
-        } catch {
-            return false
-        }
+        guard let data = try? Data(contentsOf: url) else { return false }
 
         let processor = ImagesProcessor(styleApplier: storage, maxWidth: frame.width, note: note)
 
