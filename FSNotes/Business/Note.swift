@@ -239,7 +239,7 @@ public class Note: NSObject {
         let defaultName = "Untitled Note"
 
         var name = name
-            .trimmingCharacters(in: CharacterSet.whitespaces)
+            .trimmingCharacters(in: .whitespaces)
             .replacingOccurrences(of: ":", with: "-")
             .replacingOccurrences(of: "/", with: ":")
 

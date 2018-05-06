@@ -38,14 +38,12 @@ extension NSFont {
             return UserDefaultsManagement.noteFont
         }
 
-        var mask = 0
-        if (isItalic) {
-            mask = NSFontBoldTrait|NSFontItalicTrait
-        } else {
-            mask = NSFontBoldTrait
+        var mask: NSFontTraitMask = .boldFontMask
+        if isItalic {
+            mask.formUnion(.italicFontMask)
         }
 
-        if let font = NSFontManager().font(withFamily: family, traits: NSFontTraitMask(rawValue: NSFontTraitMask.RawValue(mask)), weight: 5, size: CGFloat(UserDefaultsManagement.fontSize)) {
+        if let font = NSFontManager().font(withFamily: family, traits: mask, weight: 5, size: CGFloat(UserDefaultsManagement.fontSize)) {
             return font
         }
 
@@ -58,7 +56,7 @@ extension NSFont {
         }
 
         var mask = 0
-        if (isItalic) {
+        if isItalic {
             mask = NSFontItalicTrait
         }
 
@@ -74,14 +72,12 @@ extension NSFont {
             return UserDefaultsManagement.noteFont
         }
 
-        var mask = 0
-        if (isBold) {
-            mask = NSFontBoldTrait|NSFontItalicTrait
-        } else {
-            mask = NSFontItalicTrait
+        var mask: NSFontTraitMask = .boldFontMask
+        if isItalic {
+            mask.formUnion(.italicFontMask)
         }
 
-        if let font = NSFontManager().font(withFamily: family, traits: NSFontTraitMask(rawValue: NSFontTraitMask.RawValue(mask)), weight: 5, size: CGFloat(UserDefaultsManagement.fontSize)) {
+        if let font = NSFontManager().font(withFamily: family, traits: mask, weight: 5, size: CGFloat(UserDefaultsManagement.fontSize)) {
             return font
         }
 
@@ -94,7 +90,7 @@ extension NSFont {
         }
 
         var mask = 0
-        if (isBold) {
+        if isBold {
             mask = NSFontBoldTrait
         }
 

@@ -318,12 +318,12 @@ class EditTextView: NSTextView {
         }
 
         var mask = 0
-        if (font.isBold) {
-            if (font.isItalic) {
+        if font.isBold {
+            if font.isItalic {
                 mask = NSFontItalicTrait
             }
         } else {
-            if (font.isItalic) {
+            if font.isItalic {
                 mask = NSFontBoldTrait|NSFontItalicTrait
             } else {
                 mask = NSFontBoldTrait
@@ -339,12 +339,12 @@ class EditTextView: NSTextView {
         }
 
         var mask = 0
-        if (font.isItalic) {
-            if (font.isBold) {
+        if font.isItalic {
+            if font.isBold {
                 mask = NSFontBoldTrait
             }
         } else {
-            if (font.isBold) {
+            if font.isBold {
                 mask = NSFontBoldTrait|NSFontItalicTrait
             } else {
                 mask = NSFontItalicTrait
