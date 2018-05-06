@@ -24,12 +24,8 @@ class Project: Equatable {
         self.parent = parent
         self.isDefault = isDefault
 
-        if let l = label {
-            self.label = l
-        } else {
-            self.label = url.lastPathComponent
-        }
-
+        self.label = label ?? url.lastPathComponent
+s
         isCloudDrive = isCloudDriveFolder(url: url)
     }
 

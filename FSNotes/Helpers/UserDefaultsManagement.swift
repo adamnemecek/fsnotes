@@ -6,8 +6,6 @@
 //  Copyright © 2017 Oleksandr Glushchenko. All rights reserved.
 //
 
-import Foundation
-
 #if os(OSX)
     import Cocoa
     import MASShortcut

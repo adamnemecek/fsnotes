@@ -6,7 +6,6 @@
 //  Copyright © 2018 Oleksandr Glushchenko. All rights reserved.
 //
 
-import Foundation
 import Cocoa
 
 class StorageView: NSView {

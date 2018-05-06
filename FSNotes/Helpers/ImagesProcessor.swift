@@ -6,7 +6,6 @@
 //  Copyright © 2018 Oleksandr Glushchenko. All rights reserved.
 //
 
-import Foundation
 #if os(OSX)
     import Cocoa
 #else

@@ -6,8 +6,6 @@
 //  Copyright © 2018 Oleksandr Glushchenko. All rights reserved.
 //
 
-import Foundation
-
 enum NoteType: String {
     case Markdown = "md"
     case RichText = "rtf"
@@ -15,9 +13,9 @@ enum NoteType: String {
 
     static func withExt(rawValue: String) -> NoteType {
         switch rawValue {
-            case "markdown", "md", "mkd": return NoteType.Markdown
-            case "rtf": return NoteType.RichText
-            default: return NoteType.PlainText
+            case "markdown", "md", "mkd": return .Markdown
+            case "rtf": return .RichText
+            default: return .PlainText
         }
     }
 }

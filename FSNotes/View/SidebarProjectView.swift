@@ -7,8 +7,11 @@
 //
 
 import Cocoa
-import Foundation
 import Carbon.HIToolbox
+
+extension NSPasteboard.PasteboardType {
+    static let NotesTable = NSPasteboard.PasteboardType(rawValue: "notesTable")
+}
 
 class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDataSource {
 
@@ -35,7 +38,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
     override func draw(_ dirtyRect: NSRect) {
         delegate = self
         dataSource = self
-        registerForDraggedTypes([NSPasteboard.PasteboardType(rawValue: "public.data"), NSPasteboard.PasteboardType(rawValue: "notesTable")])
+        registerForDraggedTypes([NSPasteboard.PasteboardType(rawValue: "public.data"), .NotesTable])
     }
 
     override func keyDown(with event: NSEvent) {
@@ -74,7 +77,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
 
         switch sidebarItem.type {
         case .Tag:
-            if let data = board.data(forType: NSPasteboard.PasteboardType(rawValue: "notesTable")), let rows = NSKeyedUnarchiver.unarchiveObject(with: data) as? IndexSet {
+            if let data = board.data(forType: .NotesTable), let rows = NSKeyedUnarchiver.unarchiveObject(with: data) as? IndexSet {
                 let vc = getViewController()
 
                 for row in rows {
@@ -86,7 +89,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
             }
             break
         case .Label, .Category, .Trash:
-            if let data = board.data(forType: NSPasteboard.PasteboardType(rawValue: "notesTable")), let rows = NSKeyedUnarchiver.unarchiveObject(with: data) as? IndexSet {
+            if let data = board.data(forType: .NotesTable), let rows = NSKeyedUnarchiver.unarchiveObject(with: data) as? IndexSet {
                 let vc = getViewController()
 
                 var notes = [Note]()
@@ -140,14 +143,14 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
 
         switch sidebarItem.type {
         case .Tag, .Trash:
-            if let data = board.data(forType: NSPasteboard.PasteboardType(rawValue: "notesTable")), !data.isEmpty {
+            if let data = board.data(forType: .NotesTable), !data.isEmpty {
                 return .copy
             }
             break
         case .Category, .Label:
             guard sidebarItem.isSelectable() else { break }
 
-            if let data = board.data(forType: NSPasteboard.PasteboardType(rawValue: "notesTable")), !data.isEmpty {
+            if let data = board.data(forType: .NotesTable), !data.isEmpty {
                 return .move
             }
 
