@@ -121,7 +121,7 @@ class NightModeViewController: UITableViewController, CLLocationManagerDelegate 
             }
 
             if nightMode == .brightness {
-                NotificationCenter.default.post(name: NSNotification.Name.UIScreenBrightnessDidChange, object: nil)
+                NotificationCenter.default.post(name: .UIScreenBrightnessDidChange, object: nil)
             }
 
             tableView.reloadData()
@@ -179,6 +179,6 @@ class NightModeViewController: UITableViewController, CLLocationManagerDelegate 
 
         print("slider: \(sender.value)")
         UserDefaultsManagement.maxNightModeBrightnessLevel = sender.value
-        NotificationCenter.default.post(name: NSNotification.Name.UIScreenBrightnessDidChange, object: nil)
+        NotificationCenter.default.post(name: .UIScreenBrightnessDidChange, object: nil)
     }
 }

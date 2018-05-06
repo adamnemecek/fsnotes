@@ -58,11 +58,11 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
         cloudDriveWatcher()
         keyValueWatcher()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged), name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(preferredContentSizeChanged), name: .UIContentSizeCategoryDidChange, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(rotated), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(rotated), name: .UIDeviceOrientationDidChange, object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(didChangeScreenBrightness), name: NSNotification.Name.UIScreenBrightnessDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didChangeScreenBrightness), name: .UIScreenBrightnessDidChange, object: nil)
 
         let swipe = UIPanGestureRecognizer(target: notesTable, action: #selector(notesTable.handleSwipe))
         swipe.delegate = self
@@ -169,7 +169,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UIGestureRecognizer
         cloudDriveQuery?.start()
 
         let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(handleMetadataQueryUpdates), name: NSNotification.Name.NSMetadataQueryDidUpdate, object: metadataQuery)
+        notificationCenter.addObserver(self, selector: #selector(handleMetadataQueryUpdates), name: .NSMetadataQueryDidUpdate, object: metadataQuery)
     }
 
     @objc func handleMetadataQueryUpdates(notification: NSNotification) {

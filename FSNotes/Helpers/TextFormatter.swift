@@ -137,7 +137,7 @@ public class TextFormatter {
             }
 
             if (textView.typingAttributes[.underlineStyle] == nil) {
-                attributedString.addAttribute(NSAttributedStringKey.underlineStyle, value: NSUnderlineStyle.styleSingle.rawValue, range: selectedRange)
+                attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.styleSingle.rawValue, range: selectedRange)
                 textView.typingAttributes[.underlineStyle] = 1
             } else {
                 textView.typingAttributes.removeValue(forKey: NSAttributedStringKey(rawValue: "NSUnderline"))
@@ -155,7 +155,7 @@ public class TextFormatter {
             }
 
             if (textView.typingAttributes[.strikethroughStyle] == nil) {
-                attributedString.addAttribute(NSAttributedStringKey.strikethroughStyle, value: 2, range: selectedRange)
+                attributedString.addAttribute(.strikethroughStyle, value: 2, range: selectedRange)
                 textView.typingAttributes[.strikethroughStyle] = 2
             } else {
                 textView.typingAttributes.removeValue(forKey: NSAttributedStringKey(rawValue: "NSStrikethrough"))
@@ -210,7 +210,7 @@ public class TextFormatter {
         }
 
         let code = storage.attributedSubstring(from: range).string
-        let lines = code.components(separatedBy: CharacterSet.newlines)
+        let lines = code.components(separatedBy: .newlines)
 
         var result: String = ""
         var added: Int = 0
@@ -263,7 +263,7 @@ public class TextFormatter {
             code = storage.attributedSubstring(from: range).string
         }
 
-        let lines = code.components(separatedBy: CharacterSet.newlines)
+        let lines = code.components(separatedBy: .newlines)
 
         var result: [String] = []
         var removed: Int = 1

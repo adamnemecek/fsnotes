@@ -101,14 +101,14 @@ public class NotesTextProcessor {
 
     public static func getFencedCodeBlockRange(paragraphRange: NSRange, string: NSString) -> NSRange? {
         let regex = try! NSRegularExpression(pattern: NotesTextProcessor._codeQuoteBlockPattern, options: [
-            NSRegularExpression.Options.allowCommentsAndWhitespace,
-            NSRegularExpression.Options.anchorsMatchLines
+            .allowCommentsAndWhitespace,
+            .anchorsMatchLines
             ])
 
         var foundRange: NSRange? = nil
         regex.enumerateMatches(
             in: string as String,
-            options: NSRegularExpression.MatchingOptions(),
+            options: [],
             range: NSRange(0..<string.length),
             using: { (result, matchingFlags, stop) -> Void in
                 guard let r = result else {
@@ -217,7 +217,7 @@ public class NotesTextProcessor {
 
         regex.enumerateMatches(
             in: content.string,
-            options: NSRegularExpression.MatchingOptions(),
+            options: [],
             range: range,
             using: { (result, matchingFlags, stop) -> Void in
                 guard let r = result else {
@@ -241,7 +241,7 @@ public class NotesTextProcessor {
 
         regexFencedCodeBlock.enumerateMatches(
             in: content.string,
-            options: NSRegularExpression.MatchingOptions(),
+            options: [],
             range: range,
             using: { (result, matchingFlags, stop) -> Void in
                 guard let r = result else {
@@ -1251,11 +1251,11 @@ public class NotesTextProcessor {
         storage.removeAttribute(.link, range: range)
 
         let pattern = "(https?:\\/\\/(?:www\\.|(?!www))[^\\s\\.]+\\.[^\\s]{2,}|www\\.[^\\s]+\\.[^\\s]{2,})"
-        let regex = try! NSRegularExpression(pattern: pattern, options: [NSRegularExpression.Options.caseInsensitive])
+        let regex = try! NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
 
         regex.enumerateMatches(
             in: (storage.string),
-            options: NSRegularExpression.MatchingOptions(),
+            options: [],
             range: range,
             using: { (result, matchingFlags, stop) -> Void in
                 if let range = result?.range {
@@ -1338,11 +1338,11 @@ public class NotesTextProcessor {
         let range: NSRange = NSMakeRange(0, storage.string.count)
 
         do {
-            let regex = try NSRegularExpression(pattern: pattern, options: [NSRegularExpression.Options.caseInsensitive])
+            let regex = try NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
 
             regex.enumerateMatches(
                 in: storage.string,
-                options: NSRegularExpression.MatchingOptions(),
+                options: [],
                 range: range,
                 using: {
                     (textCheckingResult, matchingFlags, stop) -> Void in
@@ -1353,15 +1353,15 @@ public class NotesTextProcessor {
                     if remove {
                         if attributedString.attributes(at: subRange.location, effectiveRange: nil).keys.contains(NoteAttribute.highlight) {
                             attributedString.removeAttribute(NoteAttribute.highlight, range: subRange)
-                            attributedString.addAttribute(NSAttributedStringKey.backgroundColor, value: NotesTextProcessor.codeBackground, range: subRange)
+                            attributedString.addAttribute(.backgroundColor, value: NotesTextProcessor.codeBackground, range: subRange)
                         } else {
-                            attributedString.removeAttribute(NSAttributedStringKey.backgroundColor, range: subRange)
+                            attributedString.removeAttribute(.backgroundColor, range: subRange)
                         }
                     } else {
-                        if attributedString.attributes(at: subRange.location, effectiveRange: nil).keys.contains(NSAttributedStringKey.backgroundColor) {
+                        if attributedString.attributes(at: subRange.location, effectiveRange: nil).keys.contains(.backgroundColor) {
                             attributedString.addAttribute(NoteAttribute.highlight, value: true, range: subRange)
                         }
-                        attributedString.addAttribute(NSAttributedStringKey.backgroundColor, value: highlightColor, range: subRange)
+                        attributedString.addAttribute(.backgroundColor, value: highlightColor, range: subRange)
                     }
             }
             )
@@ -1404,9 +1404,9 @@ public struct MarklightRegex {
                         completion: @escaping (_ result: NSTextCheckingResult?) -> Void) {
         let s = input as NSString
         //NSRegularExpression.
-        let options = NSRegularExpression.MatchingOptions(rawValue: 0)
+
         regularExpression.enumerateMatches(in: s as String,
-                                           options: options,
+                                           options: [],
                                            range: range,
                                            using: { (result, flags, stop) -> Void in
 
