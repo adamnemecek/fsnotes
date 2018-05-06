@@ -64,7 +64,7 @@ class Storage {
     }
 
     public func getChildProjects(project: Project) -> [Project] {
-        return projects.filter({ $0.parent == project })
+        return projects.filter { $0.parent == project }
     }
 
     public func getRootProjects() -> [Project] {

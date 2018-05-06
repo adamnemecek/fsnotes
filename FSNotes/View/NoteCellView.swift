@@ -96,7 +96,7 @@ class NoteCellView: NSTableCellView {
         textParagraph.lineSpacing = previewLineSpacing
         textParagraph.maximumLineHeight = previewMaximumLineHeight
 
-        let attribs: [NSAttributedStringKey: Sny] = [
+        let attribs: [NSAttributedStringKey: Any] = [
             .font: font,
             .foregroundColor: textColor,
             .paragraphStyle: textParagraph

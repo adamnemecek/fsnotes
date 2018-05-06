@@ -25,7 +25,7 @@ class Project: Equatable {
         self.isDefault = isDefault
 
         self.label = label ?? url.lastPathComponent
-s
+
         isCloudDrive = isCloudDriveFolder(url: url)
     }
 

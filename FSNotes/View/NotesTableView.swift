@@ -86,9 +86,8 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
 
     func tableView(_ tableView: NSTableView, writeRowsWith rowIndexes: IndexSet, to pboard: NSPasteboard) -> Bool {
         let data = NSKeyedArchiver.archivedData(withRootObject: rowIndexes)
-        let type = .NotesTable
-        pboard.declareTypes([type], owner: self)
-        pboard.setData(data, forType: type)
+        pboard.declareTypes([.NotesTable], owner: self)
+        pboard.setData(data, forType: .NotesTable)
         return true
     }
 

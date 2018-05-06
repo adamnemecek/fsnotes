@@ -8,8 +8,10 @@
 
 #if os(OSX)
     import Cocoa
+    typealias Image = NSImage
 #else
     import UIKit
+    typealias Image = UIImage
 #endif
 
 class SidebarItem {
