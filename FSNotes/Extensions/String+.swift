@@ -16,7 +16,7 @@ extension String {
     // provided array of terms.
     func localizedCaseInsensitiveContainsTerms(_ terms: [Substring]) -> Bool {
         // Use magic from https://stackoverflow.com/a/41902740/2778502
-        return terms.first(where: { !self.localizedLowercase.contains($0) }) == nil
+        return terms.contains { !self.localizedLowercase.contains($0) }
     }
 
     func trim() -> String {

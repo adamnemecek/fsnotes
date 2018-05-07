@@ -12,6 +12,7 @@ import Carbon.HIToolbox
 extension NSPasteboard.PasteboardType {
     static let NotesTable = NSPasteboard.PasteboardType(rawValue: "notesTable")
     static let FileURL = NSPasteboard.PasteboardType(kUTTypeFileURL as String)
+    static let PublicData = NSPasteboard.PasteboardType(rawValue: "public.data")
 }
 
 class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDataSource {
@@ -39,7 +40,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
     override func draw(_ dirtyRect: NSRect) {
         delegate = self
         dataSource = self
-        registerForDraggedTypes([NSPasteboard.PasteboardType(rawValue: "public.data"), .NotesTable])
+        registerForDraggedTypes([.PublicData, .NotesTable])
     }
 
     override func keyDown(with event: NSEvent) {
@@ -147,7 +148,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
             if let data = board.data(forType: .NotesTable), !data.isEmpty {
                 return .copy
             }
-            break
+
         case .Category, .Label:
             guard sidebarItem.isSelectable() else { break }
 
@@ -158,7 +159,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
             if let urls = board.readObjects(forClasses: [NSURL.self], options: nil) as? [URL], urls.count > 0 {
                 return .copy
             }
-            break
+
         default:
             break
         }
@@ -251,7 +252,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
     }
 
     func outlineView(_ outlineView: NSOutlineView, rowViewForItem item: Any) -> NSTableRowView? {
-        return SidebarTableRowView(frame: NSZeroRect)
+        return SidebarTableRowView(frame: .zero)
     }
 
     func outlineViewSelectionDidChange(_ notification: Notification) {
@@ -267,7 +268,7 @@ class SidebarProjectView: NSOutlineView, NSOutlineViewDelegate, NSOutlineViewDat
         vd.prevQuery = nil
         vd.updateTable() {
             if self.isFirstLaunch {
-                if let url = UserDefaultsManagement.lastSelectedURL, let lastNote = vd.storage.getBy(url: url), let i = vd.notesTableView.getIndex(lastNote) {
+                if let url = UserDefaultsManagement.lastSelectedURL, let lastNote = vd.storage.getBy(url: url), let i = vd.notesTableView.index(of: lastNote) {
                     vd.notesTableView.selectRow(i)
                     vd.notesTableView.scrollRowToVisible(i)
                 } else if vd.notesTableView.noteList.count > 0 {

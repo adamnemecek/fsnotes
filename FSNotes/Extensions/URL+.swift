@@ -69,7 +69,7 @@ extension URL {
             guard result >= 0 else { throw URL.posixError(errno) }
 
             // Extract attribute names:
-            let list = data.split(separator: 0).flatMap {
+            let list = data.split(separator: 0).compactMap {
                 String(data: Data($0), encoding: .utf8)
             }
             return list
@@ -87,6 +87,6 @@ extension URL {
     // let titleStr = myURL['title']
     subscript(queryParam:String) -> String? {
         guard let url = URLComponents(string: self.absoluteString) else { return nil }
-        return url.queryItems?.first(where: { $0.name == queryParam })?.value
+        return (url.queryItems?.first { $0.name == queryParam })?.value
     }
 }

@@ -20,13 +20,13 @@ class SearchTextField: NSTextField {
         }
 
         // Down arrow
-        if (event.keyCode == 125) {
+        if event.keyCode == 125 {
             vc.focusTable()
             return
         }
 
         // Left arrow
-        if (event.keyCode == 123) {
+        if event.keyCode == 123 {
             vc.storageOutlineView.window?.makeFirstResponder(vc.storageOutlineView)
             vc.storageOutlineView.selectRowIndexes([1], byExtendingSelection: false)
         }

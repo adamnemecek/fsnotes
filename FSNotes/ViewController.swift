@@ -396,7 +396,7 @@ class ViewController: NSViewController,
         let cursor = editArea.selectedRanges[0].rangeValue.location
 
         self.updateTable() {
-            if let selected = selectedNote, let index = notesTable.getIndex(selected) {
+            if let selected = selectedNote, let index = notesTable.index(of: selected) {
                 notesTable.selectRowIndexes([index], byExtendingSelection: false)
                 self.refillEditArea(cursor: cursor)
             }
@@ -413,13 +413,7 @@ class ViewController: NSViewController,
         }
 
         DispatchQueue.main.async {
-            var location: Int = 0
-
-            if let unwrappedCursor = cursor {
-                location = unwrappedCursor
-            } else {
-                location = self.editArea.selectedRanges[0].rangeValue.location
-            }
+            let location = cursor ?? self.editArea.selectedRanges[0].rangeValue.location
 
             let selected = self.notesTableView.selectedRow
             if (selected > -1 && self.notesTableView.noteList.indices.contains(selected)) {
@@ -1081,8 +1075,8 @@ class ViewController: NSViewController,
         note.markdownCache()
         refillEditArea()
 
-        updateTable() {
-            if let index = self.notesTableView.getIndex(note) {
+        updateTable {
+            if let index = self.notesTableView.index(of: note) {
                 self.notesTableView.selectRowIndexes([index], byExtendingSelection: false)
                 self.notesTableView.scrollRowToVisible(index)
             }

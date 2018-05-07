@@ -443,9 +443,7 @@ class Storage {
         DispatchQueue.global(qos: .background).async {
             self.isActiveCaching = true
 
-            let markdownDocuments = self.noteList.filter{
-                $0.isMarkdown()
-            }
+            let markdownDocuments = self.noteList.filter { $0.isMarkdown }
 
             for note in markdownDocuments {
                 note.markdownCache()

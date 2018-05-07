@@ -211,15 +211,9 @@ public class UserDefaultsManagement {
     }
 
     static var storageUrl: URL? {
-        get {
-            if let path = storagePath {
-                let expanded = NSString(string: path).expandingTildeInPath
-
-                return URL(fileURLWithPath: expanded)
-            }
-
-            return nil
-        }
+        guard let path = storagePath else { return nil }
+        let expanded = NSString(string: path).expandingTildeInPath
+        return URL(fileURLWithPath: expanded)
     }
 
     static var storageExtension: String {

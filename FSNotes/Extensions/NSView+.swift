@@ -11,13 +11,8 @@ import Cocoa
 extension NSView {
     var backgroundColor: NSColor? {
         get {
-            if let colorRef = self.layer?.backgroundColor {
-                return NSColor(cgColor: colorRef)
-            } else {
-                return nil
-            }
+            return self.layer?.backgroundColor.flatMap { NSColor(cgColor: $0) }
         }
-
         set {
             self.wantsLayer = true
             self.layer?.backgroundColor = newValue?.cgColor

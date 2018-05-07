@@ -9,6 +9,13 @@
 import Carbon
 import Cocoa
 
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        guard indices.contains(index) else { return nil }
+        return self[index]
+    }
+}
+
 class NotesTableView: NSTableView, NSTableViewDataSource,
     NSTableViewDelegate {
 
@@ -92,29 +99,16 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
     }
 
     func getNoteFromSelectedRow() -> Note? {
-        var note: Note? = nil
-        var selected = self.selectedRow
-
-        if (selected < 0) {
-            selected = 0
-        }
-
-        if (noteList.indices.contains(selected)) {
-            note = noteList[selected]
-        }
-
-        return note
+        let selected = max(0, self.selectedRow)
+        return noteList[safe: selected]
     }
 
     func getSelectedNote() -> Note? {
-        var note: Note? = nil
-        if (noteList.indices.contains(selectedRow)) {
-            note = noteList[selectedRow]
-        }
-        return note
+        return noteList[safe: selectedRow]
     }
 
-    func getSelectedNotes() -> [Note]? {
+    func getSelectedNotes() -> [Note] {
+
         var notes = [Note]()
 
         for row in selectedRowIndexes {
@@ -124,7 +118,7 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
         }
 
         if notes.isEmpty {
-            return nil
+            return []
         }
 
         return notes
@@ -190,7 +184,7 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
             trashMenu.title = "Trash"
             trashMenu.action = #selector(viewController.deleteNote)
             submenu.addItem(trashMenu)
-            submenu.addItem(NSMenuItem.separator())
+            submenu.addItem(.separator())
         }
 
         let projects = storage.getProjects()
@@ -207,11 +201,8 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
         }
     }
 
-    func getIndex(_ note: Note) -> Int? {
-        if let index = noteList.index(where: {$0 === note}) {
-            return index
-        }
-        return nil
+    func index(of note: Note) -> Int? {
+        return noteList.index(of: note)
     }
 
     func selectNext() {
@@ -229,7 +220,7 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
     }
 
     func setSelected(note: Note) {
-        if let i = getIndex(note) {
+        if let i = index(of: note) {
             selectRow(i)
             scrollRowToVisible(i)
         }
@@ -237,7 +228,7 @@ class NotesTableView: NSTableView, NSTableViewDataSource,
 
     func removeByNotes(notes: [Note]) {
         for note in notes {
-            if let i = noteList.index(where: {$0 === note}) {
+            if let i = index(of: note) {
                 let indexSet = IndexSet(integer: i)
                 noteList.remove(at: i)
                 removeRows(at: indexSet, withAnimation: .effectFade)

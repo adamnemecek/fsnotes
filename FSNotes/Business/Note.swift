@@ -130,13 +130,13 @@ public class Note: NSObject {
                 if isTrash() {
                     try FileManager.default.removeItem(at: url)
                 } else {
-                    guard let dst = getTrashURL()?.appendingPathComponent(name) else { return nil }
+                    guard let dst = trashURL?.appendingPathComponent(name) else { return nil }
 
                     do {
                         try FileManager.default.moveItem(at: url, to: dst)
                     } catch {
                         let reserveName = "\(Int(Date().timeIntervalSince1970)) \(name)"
-                        guard let reserveDst = getTrashURL()?.appendingPathComponent(reserveName) else { return nil }
+                        guard let reserveDst = trashURL?.appendingPathComponent(reserveName) else { return nil }
 
                         try FileManager.default.moveItem(at: url, to: reserveDst)
 
@@ -158,12 +158,8 @@ public class Note: NSObject {
         return nil
     }
 
-    private func getTrashURL() -> URL? {
-        if let url = sharedStorage.getTrash(url: url) {
-            return url
-        }
-
-        return nil
+    private var trashURL: URL? {
+        return sharedStorage.getTrash(url: url)
     }
 
     @objc func getPreviewForLabel() -> String {
@@ -262,12 +258,12 @@ public class Note: NSObject {
         return fileUrl
     }
 
-    func isRTF() -> Bool {
-        return (type == .RichText)
+    var isRTF: Bool {
+        return type == .RichText
     }
 
-    func isMarkdown() -> Bool {
-        return (type == .Markdown)
+    var isMarkdown: Bool {
+        return type == .Markdown
     }
 
     func addPin() {
@@ -424,7 +420,7 @@ public class Note: NSObject {
     }
 
     func markdownCache() {
-        guard isMarkdown() else {
+        guard isMarkdown else {
             return
         }
 
@@ -446,7 +442,7 @@ public class Note: NSObject {
     func getDocAttributes() -> [NSAttributedString.DocumentAttributeKey : Any] {
         var options: [NSAttributedString.DocumentAttributeKey : Any]
 
-        if (type == .RichText) {
+        if type == .RichText {
             options = [
                 .documentType : NSAttributedString.DocumentType.rtf
             ]

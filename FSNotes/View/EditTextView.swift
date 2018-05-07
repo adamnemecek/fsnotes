@@ -41,7 +41,7 @@ class EditTextView: NSTextView {
     override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
         guard let note = EditTextView.note else { return false }
 
-        if note.isRTF() {
+        if note.isRTF {
             let disableRTF = [
                 "Header 1", "Header 2", "Header 3", "Header 4", "Header 5",
                 "Header 6", "Link", "Image", "Toggle preview"
@@ -149,7 +149,7 @@ class EditTextView: NSTextView {
         }
 
         isEditable = !UserDefaultsManagement.preview
-        isRichText = note.isRTF()
+        isRichText = note.isRTF
 
         typingAttributes.removeAll()
         typingAttributes[.font] = UserDefaultsManagement.noteFont
@@ -173,7 +173,7 @@ class EditTextView: NSTextView {
 
         storage.setAttributedString(note.content)
 
-        if !note.isMarkdown()  {
+        if !note.isMarkdown {
             if note.type == .RichText {
                 storage.updateFont()
             }
@@ -196,7 +196,7 @@ class EditTextView: NSTextView {
             isHighlighted = true
         }
 
-        if note.isMarkdown() && note.isCached && UserDefaultsManagement.liveImagesPreview {
+        if note.isMarkdown && note.isCached && UserDefaultsManagement.liveImagesPreview {
             self.timer?.invalidate()
             self.timer = Timer.scheduledTimer(timeInterval: TimeInterval(0.3), target: self, selector: #selector(loadImages), userInfo: nil, repeats: false)
         }
@@ -358,7 +358,8 @@ class EditTextView: NSTextView {
     override func paste(_ sender: Any?) {
         super.paste(sender)
 
-        guard let note = EditTextView.note, note.isMarkdown(), let clipboard = NSPasteboard.general.string(forType: .string), let storage = textStorage else {
+        guard let note = EditTextView.note, note.isMarkdown, let clipboard = NSPasteboard.general.string(forType: .string),
+            let storage = textStorage else {
             return
         }
 
@@ -478,12 +479,9 @@ class EditTextView: NSTextView {
             return
         }
 
-        if let note = EditTextView.note {
-            if let data = try? note.url.extendedAttribute(forName: "co.fluder.fsnotes.cursor") {
-                position = data.withUnsafeBytes { (ptr: UnsafePointer<Int>) -> Int in
-                    return ptr.pointee
-                }
-            }
+        if let note = EditTextView.note,
+            let data = try? note.url.extendedAttribute(forName: "co.fluder.fsnotes.cursor") {
+            position = data.withUnsafeBytes { $0.pointee }
         }
 
         if position <= storage.length {
@@ -500,7 +498,7 @@ class EditTextView: NSTextView {
     }
 
     func setEditorTextColor(_ color: NSColor) {
-        if let note = EditTextView.note, !note.isMarkdown() {
+        if let note = EditTextView.note, !note.isMarkdown {
             textColor = color
         }
     }

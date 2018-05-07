@@ -24,8 +24,8 @@ class SidebarCellView: NSTableCellView {
     private var trackingArea: NSTrackingArea?
 
     override func updateTrackingAreas() {
-        if let trackingArea = self.trackingArea {
-            self.removeTrackingArea(trackingArea)
+        self.trackingArea.map {
+            self.removeTrackingArea($0)
         }
 
         let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways]
